@@ -8,8 +8,8 @@ export function createDeck(): CardData[]{
     );
 }
 
-export function shuffleDeck(): void{
-    for (let i = this.deck.length - 1; i > 0; i--){
+export function shuffleDeck(deck:CardData[]): void{
+    for (let i = deck.length - 1; i > 0; i--){
         const j = Math.floor(Math.random() * (i+1));
         [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
     }
