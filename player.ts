@@ -15,8 +15,12 @@ export class Player {
 
     playCard(index: number): CardData | null {
         if(index >= 0 && index < this.hand.length) {
-            return this.hand.splice(index, 1)[0];
+            const playedCard = this.hand.splice(index, 1)[0];
+            return playedCard;
         }
+        console.warn("Wrong card indx");
         return null;
     }
+
+    
 }
