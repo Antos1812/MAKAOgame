@@ -21,8 +21,12 @@ export class Game{
     dealCards(count: number): void{
         for (let i = 0; i<count; i++){
             this.players.forEach((player) => {
+                if(this.deck.length === 0) {
+                    console.log("0 cards in deck");
+                    return;
+                }
                 const card = this.deck.pop();
-                if(card) {
+                if (card) {
                     player.drawCard(card);
                 }
             });
