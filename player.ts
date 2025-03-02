@@ -22,5 +22,13 @@ export class Player {
         return null;
     }
 
-    
+    getHand(): CardData[] {
+        return [...this.hand];
+    }
+
+
+
+    hasCards(): boolean {
+        return this.hand.length > 0;
+    }
 }
