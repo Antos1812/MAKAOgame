@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gra karciana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .player {
+            margin: 20px;
+        }
+        .card {
+            margin: 5px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <script src="./dist/main.js"></script>
+    <script type="module">
+        import { Game } from "./game.js";
+        import { Player } from "./player.js";
+        
+        const game = new Game(["Player 1", "Player 2"]);
+        game.dealCards(5);
+
+        const gameContainer = document.getElementById("game");
+
+        game.players.forEach((player, index) => {
+            const playerDiv = document.createElement("div");
+            playerDiv.classList.add("player");
+            playerDiv.innerHTML = `<h3>${player.name}</h3>`;
+
+            player.hand.forEach((card, cardIndex) => {
+                const cardDiv = document.createElement("div");
+                cardDiv.classList.add("card");
+                cardDiv.textContent = `${card.rank} ${card.suit}`;
+
+                // Opcjonalnie: Możesz dodać zdarzenie kliknięcia na kartę
+                cardDiv.addEventListener("click", () => {
+                    console.log(`${player.name} played ${card.rank} ${card.suit}`);
+                    player.playCard(cardIndex);
+                    cardDiv.style.display = "none"; // Ukryj kartę po jej zagraniu
+                });
+
+                playerDiv.appendChild(cardDiv);
+            });
+
+            gameContainer.appendChild(playerDiv);
+        });
+    </script>
+</body>
+</html>
