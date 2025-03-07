@@ -1,3 +1,9 @@
+
+const CARD_WIDTH = 100;
+const CARD_HEIGHT = 150;
+const SPRITE_SHEET_URL = '';
+
+
 export enum Suit {
   Hearts = "Hearts",
   Diamonds = "Diamonds",
@@ -32,17 +38,24 @@ export type CardObj = {
   element: HTMLElement;
   flip: () => void;
   highlight: (active: boolean) => void;
+  destroy: () => void;
 };
 
-export function createCard(data: CardData, frame: number): CardObj {
+export function createCard(data: CardData, frame: number, parentElement: HTMLElement): CardObj {
+  if(!data || !data.suit || !data.rank) {
+    throw new Error("Wrong card data");
+  }
+  if (frame < 0 || frame > 12) {
+    throw new Error("Wrong frame value");
+  }
   const cardElement = document.createElement("div");
   cardElement.classList.add("card");
   cardElement.dataset.suit = data.suit;
   cardElement.dataset.rank = data.rank;
-  cardElement.style.backgroundImage = `url('/path/to/cards/spritesheet.png')`; 
-  cardElement.style.backgroundPosition = `0px ${-frame * 100}px`;
-  cardElement.style.width = "100px"; 
-  cardElement.style.height = "150px";
+  cardElement.style.backgroundImage = `url('')`; 
+  cardElement.style.backgroundPosition = `0px ${-frame * CARD_HEIGHT}px`;
+  cardElement.style.width = `${CARD_WIDTH}px`; 
+  cardElement.style.height = `${CARD_HEIGHT}px`;
 
   
   function flip() {
@@ -58,12 +71,21 @@ export function createCard(data: CardData, frame: number): CardObj {
       }
   }
 
-  document.body.appendChild(cardElement); 
+  function destroy() {
+      parentElement.removeChild(cardElement);
+
+      cardElement.removeEventListener("click", flip);
+  }
+  parentElement.appendChild(cardElement);
+
   return {
       suit: data.suit,
       rank: data.rank,
       element: cardElement,
       flip,
-      highlight
+      highlight,
+      destroy
   };
+
+  
 }
