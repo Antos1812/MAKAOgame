@@ -1,72 +1,131 @@
+
+
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gra karciana</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .player {
-            margin: 20px;
-        }
-        .card {
-            margin: 5px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;
-            box-sizing: border-box;
-            transition: display 0.5s;
-        }
-    </style>
+    <title>Makao</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css'>
+    <link href="https://fonts.googleapis.com/css?family=Almendra:400,700" rel="stylesheet">
 </head>
+
 <body>
-    <div id="game"></div>
-    <script src="./dist/main.js"></script>
-    <script type="module">
-        import { Game } from "./game.js";
-        import { Player } from "./player.js";
-        
-        const game = new Game(["Player 1", "Player 2"]);
-        game.dealCards(5);
+    <div id="score">
+        <button id="open-rules" class="rules-icon"><img class="icon-image" src="https://cdn.iconscout.com/public/images/icon/premium/png-512/prescription-notes-rules-checklist-todo-tasks-39940c544bd69358-512x512.png"></button>
+        <button id="restart-game" class="rules-icon"><img class="icon-image" src="https://cdn2.iconfinder.com/data/icons/basic-ui-elements-round/700/012_restart-2-512.png"></button>
+        <div class="moves-count" data-moves="0">
+            <label>Moves:</label>
+            <span id="moves-count">0</span>
+        </div>
+        <div class="message">
+            <label>Message:</label>
+        </div>
+        <div class="global-stats">
+            <h6>Global statistics</h6>
+            <div class="score" data-score="0">
+                <label>Macao call count:</label>
+                <span id="macao-call-counter">0</span>
+            </div>
+            <div class="score" data-score="0">
+                <label>Total player score:</label>
+                <span id="total-player-win-counter">0</span>
+            </div>
+            <div class="score" data-score="0">
+                <label>Total computer score:</label>
+                <span id="total-cpu-win-counter">0</span>
+            </div>
+            <div class="total-moves-counter" data-moves="0">
+                <label>Total moves:</label>
+                <span id="total-moves-counter">0</span>
+            </div>
+        </div>
+        <div class="score" data-score="0">
+            <label>Computer score:</label>
+            <span id="cpu-win-counter">0</span>
+        </div>
+        <div class="score" data-score="0">
+            <label>Your score:</label>
+            <span id="player-win-counter">0</span>
+        </div>
+    </div>
+    <div id="confetti-container">
+        <canvas id="confetti"></canvas>
+    </div>
+    <div id="ace-box" class="suit-popup flex-container" style="text-align: center;">
+        <span>Pick card suit</span>
+        <div class="suit-pick">
+            <button id="hearts" class="suit-icon"><img class="icon-image" src="https://upload.wikimedia.org/wikipedia/commons/7/77/Heart_symbol_c00.png"></button>
+            <button id="diamonds" class="suit-icon"><img class="icon-image" src="https://www.spreadshirt.com/image-server/v1/designs/11631716,width=178,height=178/card-suit-diamond.png"></button>
+        </div>
+        <div class="suit-pick">
+            <button id="clubs" class="suit-icon"><img class="icon-image" src="http://www.clker.com/cliparts/U/3/0/g/Z/y/carte-de-trefla-md.png"></button>
+            <button id="spades" class="suit-icon"><img class="icon-image" src="https://image.freepik.com/free-icon/spades-symbol_318-40683.jpg"></button>
+        </div>
+    </div>
+    <div id="jack-box" class="suit-popup flex-container">
+        <span>Pick card</span>
+        <div class="demand-icons">
+            <button id="demand5" class="suit-icon">5</button>
+            <button id="demand6" class="suit-icon">6</button>
+            <button id="demand7" class="suit-icon">7</button>
+            <button id="demand8" class="suit-icon">8</button>
+            <button id="demand9" class="suit-icon">9</button>
+            <button id="demand10" class="suit-icon">10</button>
+            <button id="demandQ" class="suit-icon">Q</button>
+            <button id="demandNone" class="suit-icon">X</button>
+        </div>
+    </div>
 
-        const gameContainer = document.getElementById("game");
-
-        game.players.forEach((player, index) => {
-            const playerDiv = document.createElement("div");
-            playerDiv.classList.add("player");
-            playerDiv.innerHTML = `<h3>${player.name}</h3>`;
-
-            player.hand.forEach((card, cardIndex) => {
-                const cardDiv = document.createElement("div");
-                cardDiv.classList.add("card");
-                cardDiv.textContent = `${card.rank} ${card.suit}`;
-
-                // Opcjonalnie: Możesz dodać zdarzenie kliknięcia na kartę
-                cardDiv.addEventListener("click", () => {
-                    console.log(`${player.name} played ${card.rank} ${card.suit}`);
-                    player.playCard(cardIndex);
-                    cardDiv.style.display = "none"; // Ukryj kartę po jej zagraniu
-                });
-
-                playerDiv.appendChild(cardDiv);
-            });
-
-            gameContainer.appendChild(playerDiv);
-        });
+    </div>
+    <div id="who-starts" class="center suit-popup" style="left: 50%; top: 50%; transform: translate(-50%, -50%);"></div>
+    <div id="macao" class="center suit-popup" style="left: 50%; top: 50%; transform: translate(-50%, -50%);"></div>
+    <div id="player-win-box" class="center suit-popup win-box">
+        <h2 style="color: green">Victory</h2>
+        <h4 style="color: white">You have won</h4>
+        <button id="restart" onClick="restartGame()" class="suit-icon"><img class="icon-image" src="https://cdn4.iconfinder.com/data/icons/game-general-icon-set-1/512/reset-512.png"></button>
+        <h5 style="color: white">Play again</h5>
+    </div>
+    <div id="cpu-win-box" class="center suit-popup win-box">
+        <h2 style="color: red">Defeat</h2>
+        <h4 style="color: white">Computer has won</h4>
+        <button id="restart" onClick="restartGame()" class="suit-icon"><img class="icon-image" src="https://cdn4.iconfinder.com/data/icons/game-general-icon-set-1/512/reset-512.png"></button>
+        <h5 style="color: white">Play again</h5>
+    </div>
+    <div class="flex-container cards-container" id="cpuContainer"><div class="row cards" id="cpuCards"></div></div>
+    <br>
+    <div class="flex-container">
+        <div class="card" id="deck"> </div>
+        <div id="pile"> </div>
+    </div>
+    <br>
+    <div class="flex-container cards-container" id="playerContainer"><div class="row cards" id="playerCards"></div></div>
+    <div id="topCard"> </div>
+    <div class="buttons">
+        <button id="confirmCards" class="btn btn-success" data-toggle="confirmation" data-singleton="true">Confirm cards</button>
+        <button id="resetCards" class="btn btn-danger" data-toggle="confirmation" data-singleton="true">Reset chosen cards</button>
+        <button id="waitTurn" class="btn btn-primary invisible" data-toggle="confirmation" data-singleton="true">Wait</button>
+    </div>
+    <div id="noCards"> </div>
+    <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyC8wWQWypRyuOEI3eSixL0agzMP1KLRnhA",
+            authDomain: "makao-win-counter.firebaseapp.com",
+            databaseURL: "https://makao-win-counter.firebaseio.com",
+            projectId: "makao-win-counter",
+            storageBucket: "makao-win-counter.appspot.com",
+            messagingSenderId: "906349450223"
+        };
+        firebase.initializeApp(config);
     </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script src="/dist/main.js"></script>
+    <script src="/dist/player.js"></script>
+    <script src="/dist/card.js"></script>
+    <script src="/dist/deck.js"></script>
+    <script src="/dist/game.js"></script>
 </body>
 </html>
